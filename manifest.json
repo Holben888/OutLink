@@ -1,0 +1,45 @@
+{
+  "manifest_version": 2,
+  "name": "OutLink",
+  "description": "Never have weblinks been so accessible",
+  "short_name": "OutLink",
+  "version": "0.1",
+  "browser_action": {
+    "default_popup": "index.html",
+    "default_icon": "images/icon.png"
+  },
+  "background": {
+    "page": "app/background.html"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "http://*/*",
+        "https://*/*"
+      ],
+      "css": [
+        "app/pages/floating-charm/charm-animations.css"
+      ],
+      "js": [
+        "lib/jquery/jquery-3.2.1.min.js",
+        "app/pages/floating-charm/charm-style-external.js",
+        "app/pages/floating-charm/content-script.js"
+      ]
+    }
+  ],
+  "permissions": [
+    "debugger",
+    "storage",
+    "identity",
+    "https://login.microsoftonline.com/"
+  ],
+  "web_accessible_resources": [
+    "app/pages/floating-charm/charm.html",
+    "app/pages/floating-charm/charm-style.css",
+    "app/pages/floating-charm/charm-animations.css",
+    "app/pages/floating-charm/events/js",
+    "images/outlook-logo-white.png",
+    "images/loading.gif"
+  ],
+  "content_security_policy": "script-src 'self' 'unsafe-eval' https://ssl.google-analytics.com; object-src 'self'"
+}

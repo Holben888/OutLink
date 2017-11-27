@@ -1,0 +1,10 @@
+<div class="home-wrapper">
+    <div ng-repeat="contact in selectedContacts" class="selectedContact">
+        {{contact}}
+    </div>
+    <angucomplete-alt placeholder="Send to..." pause="100" selected-object="contactSelected" local-data="contacts" search-fields="name,address"
+        input-changed="addressChanged" title-field="name" description-field="address" minlength="0" input-class="form-control form-control-small"
+        ng-keyup="$event.keyCode == 13 ? addressEntered() : null" clear-selected="true">
+    </angucomplete-alt>
+    <textarea class="form-control"></textarea>
+</div>

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html ng-app='app'>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Security-Policy" content="default-src *; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://secure.aadcdn.microsoftonline-p.com/lib/0.1.1/js/msal.min.js">
+
+    <title>OutLink</title>
+    <link rel="stylesheet" type="text/css" href="lib/bootstrap/ui-bootstrap-custom-2.5.0-csp.min.css">
+    <link rel="stylesheet" type="text/css" href="css/style.css">
+    <link rel="stylesheet" type="text/css" href="css/icon-style.css">
+    <link rel="stylesheet" type="text/css" href="lib/angular/angucomplete-alt.css">
+</head>
+
+<body>
+    <div ng-view></div>
+
+    <script type="text/javascript" src="lib/angular/angular.min.js"></script>
+    <script type="text/javascript" src="lib/angular/angular.route.min.js"></script>
+    <script type="text/javascript" src="lib/angular/angucomplete-alt.js"></script>
+    <script type="text/javascript" src="lib/bootstrap/ui-bootstrap-custom-tpls-2.5.0.min.js"></script>
+    <script type="text/javascript" src="app/app.js"></script>
+    <script type="text/javascript" src="app/config.js"></script>
+
+    <!--Controllers-->
+    <script type="text/javascript" src="app/pages/account-setup/account-setup-ctrl.js"></script>
+    <script type="text/javascript" src="app/pages/error/error-ctrl.js"></script>
+    <script type="text/javascript" src="app/pages/home/send-link-ctrl.js"></script>
+
+    <!--Services-->
+    <script type="text/javascript" src="app/services/storage-service.js"></script>
+    <script type="text/javascript" src="app/services/graphHelper.js"></script>
+</body>
+
+</html>
