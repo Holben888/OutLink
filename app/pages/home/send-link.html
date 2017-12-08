@@ -1,10 +1,35 @@
 <div class="home-wrapper">
-    <div ng-repeat="contact in selectedContacts" class="selectedContact">
-        {{contact}}
+    <div class="form-control form-control-small web-address" ng-disabled="true">{{webAddress}}</div>
+    <div class="selected-contact-container">
+        <div ng-repeat="contact in selectedContacts" class="selected-contact" ng-click="removeContactFromList(contact)">
+            {{contact.title || contact.description}}
+            <span class="glyphicon glyphicon-remove selected-contact-remove"></span>
+        </div>
     </div>
     <angucomplete-alt placeholder="Send to..." pause="100" selected-object="contactSelected" local-data="contacts" search-fields="name,address"
-        input-changed="addressChanged" title-field="name" description-field="address" minlength="0" input-class="form-control form-control-small"
-        ng-keyup="$event.keyCode == 13 ? addressEntered() : null" clear-selected="true">
+        input-changed="addressChanged" title-field="name" description-field="address" input-class="form-control form-control-small"
+        ng-keyup="$event.keyCode == 13 ? addressEntered($event) : null" clear-selected="true">
     </angucomplete-alt>
-    <textarea class="form-control"></textarea>
+    <div ng-show="errorMessage" class="alert alert-danger">{{errorMessage}}</div>
+    <textarea placeholder="Add a note (optional)" class="form-control" ng-keyup="adjustTextBox($event)" ng-model="notes"></textarea>
+</div>
+<div class="footer-bar" ng-class="{collapsed: !toggled, expanded: toggled}">
+    <p>{{footerMessage}}</p>
+    <div type="button" class="btn btn-link btn-footer" ng-disabled="selectedContacts.length == 0 && !serverError" ng-click="footerAction()">
+        <span ng-if="!serverError" class="glyphicon glyphicon-send"></span>
+        <b ng-if="serverError">Login</b>
+    </div>
+    <div type="button" class="btn btn-link btn-footer" ng-disabled="!urls.length" ng-click="toggled = !toggled">
+        <span class="glyphicon glyphicon-inbox"></span>
+    </div>
+    <div ng-repeat="urlOb in urls" class="url-object">
+        <h3>{{urlOb.url.hostname}}{{urlOb.url.pathname}}</h3>
+    </div>
+    <ul class="list-group">
+        <li ng-repeat="urlOb in urls" class="list-group-item">
+            {{urlOb.url.hostname}}{{urlOb.url.pathname}}
+        </li>
+        <li class="list-group-item">Second item</li>
+        <li class="list-group-item">Third item</li>
+    </ul>
 </div>

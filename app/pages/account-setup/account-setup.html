@@ -1,15 +1,16 @@
-<div ng-repeat="slide in slides" class="slide" ng-class="slideClass($index)">
-    <h3>{{slide.header}}</h3>
-    <p>{{slide.message}}</p>
-    <span ng-if="graphHelper.retrievingToken" class="glyphicon glyphicon-refresh glyphicon-spin"></span>
-    <button ng-if="slide.login" ng-click="slide.login()" class="btn btn-info">Login
+<!-- <div class="account-setup-wrapper" ng-style="{'background-image': 'url(' + backgroundURL + ')'}"> -->
+<div class="account-setup-wrapper">
+    <div ng-repeat="slide in slides" class="slide" ng-class="slideClass($index)">
+        <h3>{{slide.header}}</h3>
+        <p>{{slide.message}}</p>
+        <span ng-if="graphHelper.retrievingToken" class="glyphicon glyphicon-refresh glyphicon-spin"></span>
+        <button ng-if="slide.login" ng-click="slide.login()" class="btn btn-secondary">Login
+        </button>
+    </div>
+    <button ng-if="nextPages.indexOf(currentSlideIndex) > -1" ng-click="nextSlide()" class="btn btn-link btn-next-slide">
+        <span class="glyphicon glyphicon-chevron-right"></span>
+    </button>
+    <button ng-if="prevPages.indexOf(currentSlideIndex) > -1" ng-click="prevSlide()" class="btn btn-link btn-prev-slide">
+        <span class="glyphicon glyphicon-chevron-left"></span>
     </button>
 </div>
-<button ng-if="nextPages.indexOf(currentSlideIndex) > -1" ng-click="nextSlide()" class="btn btn-link btn-next-slide">
-    Next
-    <span class="glyphicon glyphicon-chevron-right"></span>
-</button>
-<button ng-if="prevPages.indexOf(currentSlideIndex) > -1" ng-click="prevSlide()" class="btn btn-link btn-prev-slide">
-    <span class="glyphicon glyphicon-chevron-left"></span>
-    Back
-</button>

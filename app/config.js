@@ -8,7 +8,7 @@ var APPLICATION_CONFIG = {
     clientSecret: "yitJKZERWT20>}vcya541/#",
     tokenURL: "https://login.microsoftonline.com/common/oauth2/v2.0/token",
     authorizationURL: "https://login.microsoftonline.com/common/oauth2/v2.0/authorize?",
-    graphScopes: "openid user.read mail.read mail.send contacts.read offline_access",
+    graphScopes: "openid user.read.all user.readwrite.all mail.read mail.send contacts.read offline_access",
     graphEndpoint: "https://graph.microsoft.com/v1.0/me/",
     nonce: 12495
 };

@@ -1,6 +1,6 @@
 ﻿.angucomplete-holder {
     position: relative;
-    padding: 2%;
+    padding: 5px 0;
 }
 
 .angucomplete-dropdown {
@@ -33,7 +33,7 @@
 }
 
 .angucomplete-selected-row, .angucomplete-row:hover {
-    background-color: rgb(35, 136, 252);
+    background-color: #0071C2;
     color: #ffffff;
 }
 

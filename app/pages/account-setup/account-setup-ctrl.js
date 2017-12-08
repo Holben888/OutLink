@@ -1,5 +1,6 @@
 angular.module('app').controller('accountSetupCtrl', function ($scope, $location, GraphHelper, storageService) {
     $scope.currentSlideIndex = 0;
+    //$scope.backgroundURL = chrome.extension.getURL("images/gradient-background.png");
     console.log($scope);
     $scope.direction = 'next';
     $scope.nextPages = [0, 1, 2, 3, 6];
@@ -36,6 +37,7 @@ angular.module('app').controller('accountSetupCtrl', function ($scope, $location
                 chrome.runtime.sendMessage("login", function (response) {
                     console.log(response);
                 });
+                window.close();
             }
         },
         {

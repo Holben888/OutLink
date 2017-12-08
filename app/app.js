@@ -16,18 +16,12 @@ app.config(function ($routeProvider) {
       controller: "sendLinkCtrl"
     })
 }).run(function ($rootScope, $location, $http) {
-  chrome.storage.sync.get('token', function (keys) {
-    if (keys.token) {
-      $rootScope.$apply(function () {
+  chrome.storage.sync.get(null, function (keys) {
+    $rootScope.$apply(function () {
+      if (keys.token)
         $http.defaults.headers.common.Authorization = 'Bearer ' + keys.token;
-      })
-    }
-  })
-  chrome.storage.sync.get('firstLoginComplete', function (keys) {
-    if (keys.firstLoginComplete) {
-      $rootScope.$apply(function () {
+      if (keys.firstLoginComplete)
         $location.path('/home');
-      })
-    }
+    })
   })
 });

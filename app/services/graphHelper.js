@@ -2,20 +2,20 @@ angular.module('app').service('GraphHelper', function ($http, $location, storage
     var redirectUri = 'https://' + chrome.runtime.id +
         '.chromiumapp.org/index.html';
     var storageSrv = storageService;
+    storageSrv.syncData();
     this.error = new Object(null);
 
     this.loginInfo = APPLICATION_CONFIG.authorizationURL +
-    'client_id=' + APPLICATION_CONFIG.client_id +
-    '&response_type=code' +
-    '&redirect_uri=' + encodeURIComponent(redirectUri) +
-    '&response_mode=query' +
-    '&scope=' + encodeURIComponent(APPLICATION_CONFIG.graphScopes) +
-    '&nonce=' + APPLICATION_CONFIG.nonce
+        'client_id=' + APPLICATION_CONFIG.client_id +
+        '&response_type=code' +
+        '&redirect_uri=' + encodeURIComponent(redirectUri) +
+        '&response_mode=query' +
+        '&scope=' + encodeURIComponent(APPLICATION_CONFIG.graphScopes) +
+        '&nonce=' + APPLICATION_CONFIG.nonce
 
     this.setHeaders = function (token) {
         chrome.storage.sync.get('token', function (keys) {
             if (keys.token) {
-                console.log(keys.token);
                 $http.defaults.headers.common.Authorization = 'Bearer ' + keys.token;
             }
         });
@@ -35,7 +35,6 @@ angular.module('app').service('GraphHelper', function ($http, $location, storage
                 '&nonce=' + APPLICATION_CONFIG.nonce
         };
         var callback = this.getTokenOnCallback.bind(this);
-        //chrome.tabs.create({url: options.url});
         chrome.identity.launchWebAuthFlow(options, callback);
     }
     this.getTokenOnCallback = function (returnUri) {
@@ -60,6 +59,10 @@ angular.module('app').service('GraphHelper', function ($http, $location, storage
                     console.log(response);
                     storageSrv.storeToken(response['access_token']);
                     $http.defaults.headers.common.Authorization = 'Bearer ' + response['access_token'];
+                    _this.me().success(function (data) {
+                        console.log(data);
+                        storageSrv.storeUser(data);
+                    })
                 }
             }).error(function (err) {
                 console.log(err);
@@ -85,32 +88,51 @@ angular.module('app').service('GraphHelper', function ($http, $location, storage
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
         })
     }
-    this.fetchInbox = function (token) {
-        $http.defaults.headers.common.Authorization = 'Bearer ' + token;
+    this.fetchInbox = function (data) {
+        $http.defaults.headers.common.Authorization = 'Bearer ' + data.token;
+        //?$filter=inferenceClassification eq 'focused'
         return $http({
             method: 'GET',
-            url: "https://graph.microsoft.com/v1.0/me/mailfolders/inbox/messages"
+            url: "https://graph.microsoft.com/v1.0/me/mailFolders/inbox/messages?$top=" + (data.topSize || 10)
         })
     }
-    this.getContacts = function (token) {
-        $http.defaults.headers.common.Authorization = 'Bearer ' + token;
+    this.getInboxSize = function (data) {
+        $http.defaults.headers.common.Authorization = 'Bearer ' + data.token;
+        return $http({
+            method: 'GET',
+            url: "https://graph.microsoft.com/v1.0/me/mailFolders/inbox"
+        })
+    }
+    this.getContacts = function (data) {
+        $http.defaults.headers.common.Authorization = 'Bearer ' + data.token;
         return $http({
             method: 'GET',
             url: "https://graph.microsoft.com/v1.0/me/contacts?$select=EmailAddresses,DisplayName"
         })
     }
 
-    this.logout = function () {
-        storageService.removeToken();
+    this.getTeams = function (data) {
+        $http.defaults.headers.common.Authorization = 'Bearer ' + data.token;
+        return $http({
+            method: 'GET',
+            url: "https://graph.microsoft.com/beta/me/joinedTeams"
+        })
     }
 
     // Get the profile of the current user.
     this.me = function () {
-        return $http.get('https://graph.microsoft.com/v1.0/me');
+        return $http({
+            method: 'GET',
+            url: "https://graph.microsoft.com/v1.0/me/"
+        })
     }
 
     // Send an email on behalf of the current user.
     this.sendMail = function (email) {
-        return $http.post('https://graph.microsoft.com/v1.0/me/sendMail', { 'message': email, 'saveToSentItems': true });
+        return $http({
+            method: 'post',
+            url: "https://graph.microsoft.com/v1.0/me/sendMail",
+            data: { 'message': email, 'saveToSentItems': false }
+        })
     }
 });
