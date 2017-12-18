@@ -82,7 +82,7 @@ function displayAnnotations(annotationInfo) {
     for (annotation of annotationInfo) {
         let attributes = annotation.split(' ');
         if (attributes.length > 7) {
-            attributes[6] = attributes.slice(7, attributes.length).join(' ');
+            attributes[6] = attributes.slice(6, attributes.length).join(' ');
             attributes = attributes.splice(0, 7);
         }
         console.log(attributes);
