@@ -16,6 +16,8 @@ angular.module('app').controller("sendLinkCtrl", function ($scope, GraphHelper, 
     var typedContact = "";
     var ignoreText = "";
 
+    chrome.browserAction.setBadgeText({ text: '' });
+
     $scope.addressChanged = function (input) {
         typedContact = input;
     }
@@ -95,9 +97,11 @@ angular.module('app').controller("sendLinkCtrl", function ($scope, GraphHelper, 
     }
     $scope.logout = function () {
         storageService.logout();
-        setTimeout(function () {
-            window.close();
-        }, 500);
+        chrome.runtime.sendMessage("logout", function (response) {
+            setTimeout(function () {
+                window.close();
+            }, 500);
+        });
     }
 
     function addContactIfValid(contact) {

@@ -27,8 +27,8 @@ angular.module('app').controller('accountSetupCtrl', function ($scope, $location
             header: "No more \"Alt-Tabbing\"",
             message: "View all of your colleague's notes on a webpage right in your browser window.",
         }, {
-            header: "Verify with ease",
-            message: "Click the charm to quickly grab codes and verification links whenever you make a new account on the web."
+            header: "Annotation and collaborate",
+            message: "Markup text on any webpage and send your comments to others that use OutLink."
         }, {
             header: "Time to get set up",
             message: "Sign in to your Outlook account and start loving your inbox again.",
@@ -51,6 +51,7 @@ angular.module('app').controller('accountSetupCtrl', function ($scope, $location
         $scope.direction = 'next';
         if ($scope.currentSlideIndex == 6) {
             storageService.loginComplete();
+            chrome.runtime.sendMessage("logged in");
             $location.url('/home');
         }
         $scope.currentSlideIndex++;

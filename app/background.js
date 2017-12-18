@@ -2,8 +2,14 @@ angular.module("app", []).run(function (GraphHelper, storageService) {
     console.log("I exist in the background");
     var graphHelper = GraphHelper;
     var storageSrv = storageService;
+    var intervalSync = null;
     storageSrv.syncData();
     graphHelper.setHeaders();
+    chrome.storage.sync.get("token", function (keys) {
+        if (keys.token) {
+            intervalSync = setInterval(syncInbox, 300 * 1000);
+        }
+    })
     chrome.runtime.onMessage.addListener(
         function (request, sender, sendResponse) {
             var httpCall = null;
@@ -11,6 +17,18 @@ angular.module("app", []).run(function (GraphHelper, storageService) {
             if (request == "login") {
                 graphHelper.login();
                 sendResponse("logging in");
+            }
+            if (request == "logged in") {
+                if (intervalSync)
+                    clearInterval(intervalSync);
+                intervalSync = setInterval(syncInbox, 300 * 1000);
+                sendResponse("logged in");
+            }
+            if (request == "logout") {
+                if (intervalSync)
+                    clearInterval(intervalSync);
+                intervalSync = null;
+                sendResponse("logged out");
             }
 
             if (request == "fetchInbox")
@@ -37,6 +55,19 @@ angular.module("app", []).run(function (GraphHelper, storageService) {
             //Specifies an asynchronous response
             return true;
         })
+    syncInbox = function () {
+        console.log('running');
+        chrome.storage.sync.get('token', function (keys) {
+            if (keys.token) {
+                makeHttpCall({
+                    responseCallback: function (data) { },
+                    httpCall: graphHelper.getInboxSize,
+                    token: keys.token,
+                    request: "fetchInbox"
+                })
+            }
+        })
+    }
     makeHttpCall = function (data) {
         //chrome.storage.local.set({ urls: [], inboxSize: 0 });
         console.log("working:", data.request);
@@ -137,8 +168,11 @@ angular.module("app", []).run(function (GraphHelper, storageService) {
             allURLs = [...allURLs, ...urls];
         })
         let retURLs = [];
-        if (allURLs.length)
+        if (allURLs.length) {
+            chrome.browserAction.setBadgeBackgroundColor({ color: [255, 0, 0, 255] });
+            chrome.browserAction.setBadgeText({ text: allURLs.length.toString() });
             retURLs = await storageSrv.addURLs(allURLs);
+        }
         return retURLs
     }
 });

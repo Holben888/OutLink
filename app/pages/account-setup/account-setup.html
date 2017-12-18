@@ -4,7 +4,7 @@
         <h3>{{slide.header}}</h3>
         <p>{{slide.message}}</p>
         <span ng-if="graphHelper.retrievingToken" class="glyphicon glyphicon-refresh glyphicon-spin"></span>
-        <button ng-if="slide.login" ng-click="slide.login()" class="btn btn-secondary">Login
+        <button ng-if="slide.login" ng-click="slide.login()" class="btn btn-primary">Login
         </button>
     </div>
     <button ng-if="nextPages.indexOf(currentSlideIndex) > -1" ng-click="nextSlide()" class="btn btn-link btn-next-slide">
