@@ -4,22 +4,36 @@
 <head>
     <meta charset="utf-8">
     <link rel="stylesheet" type="text/css" href="/app/pages/floating-charm/charm-style.css">
-    <link rel="stylesheet" type="text/css" href="/app/pages/floating-charm/charm-animations.css">
 </head>
 
 <body>
-    <div class="email-iframe-container">
-        <!-- <h1 style="visibility: hidden">aaaaa</h1> -->
-        <iframe style="height: 100%; width: 100%; border: none"></iframe>
-    </div>
-    <div class="charm slideInCharm" id="charm">
-        <div class="charm-btn" id="refresh-btn">
-            <img />
+    <div class="charm slideInCharm">
+        <div class="charm-btn less-padding" id="btn-expand">
+            <img src="/images/envelope.png" />
         </div>
-        <!--<div class="charm-btn">Login</div>-->
+    </div>
+    <div class="email-container" id="container">
+        <div class="email-header"></div>
+        <div class="charm-btn small" id="btn-shrink">
+            <img src="/images/chevron-down.png" />
+        </div>
+        <iframe></iframe>
+        <div class="message-container" id="msg-container">
+        </div>
+        <div class="email-footer">
+            <div class="charm-btn" id="btn-collapse">
+                <img src="/images/chevron-left.png" />
+            </div>
+            <div class="charm-btn" id="btn-all-msgs">
+                <img src="/images/inbox.png" />
+            </div>
+            <div class="charm-btn" id="btn-all-msgs">
+                <img src="/images/trash.png" />
+            </div>
+        </div>
     </div>
 
-    <script type="text/javascript" src="/app/pages/floating-charm/events.js"></script>
+    <script type="text/javascript" src="/app/pages/floating-charm/charm-events.js"></script>
 </body>
 
 </html>

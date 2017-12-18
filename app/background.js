@@ -41,53 +41,16 @@ angular.module("app", []).run(function (GraphHelper, storageService) {
         //chrome.storage.local.set({ urls: [], inboxSize: 0 });
         console.log("working:", data.request);
         var sendResponse = data.responseCallback;
-        var httpCall = data.httpCall;
-        var request = data.request;
-        httpCall(data).success(function (response) {
-            console.log(response);
-            if (request == "fetchInbox" && response && response.totalItemCount) {
-                chrome.storage.local.get('inboxSize', function (keys) {
-                    var inboxSize = keys.inboxSize ? keys.inboxSize : 0;
-                    if (!keys.inboxSize || response.totalItemCount - inboxSize > 0) {
-                        console.log(keys);
-                        storageSrv.setInboxSize(response.totalItemCount);
-                        makeHttpCall({
-                            ...data,
-                            topSize: response.totalItemCount - inboxSize > 100 ? 100 : response.totalItemCount - inboxSize,
-                            httpCall: graphHelper.fetchInbox
-                        })
-                    }
-                });
-            } else if (request == "fetchInbox" && response && response.value) {
-                console.log("successful second httpCall")
-                response = identifyURLS(response.value);
-            }
-            sendResponse(response ? response : { error: "no_response" });
+        data.httpCall(data).success(function (response) {
+            handleResponse(data, response);
         }).error(function (error) {
             console.log(error);
             //If request fails, the access token has expired
             graphHelper.getNewToken(storageSrv.data.refreshToken).success(function (response) {
                 if (response['access_token']) {
                     storageSrv.storeToken(response['access_token']);
-                    httpCall({ ...data, token: response['access_token'] }).success(function (response) {
-                        console.log(response);
-                        if (request == "fetchInbox" && response && response.totalItemCount) {
-                            chrome.storage.local.get('inboxSize', function (keys) {
-                                var inboxSize = keys.inboxSize ? keys.inboxSize : 0;
-                                if (!keys.inboxSize || response.totalItemCount - inboxSize > 0) {
-                                    console.log(keys);
-                                    storageSrv.setInboxSize(response.totalItemCount);
-                                    makeHttpCall({
-                                        ...data,
-                                        topSize: response.totalItemCount - inboxSize > 100 ? 100 : response.totalItemCount - inboxSize,
-                                        httpCall: graphHelper.fetchInbox
-                                    })
-                                }
-                            });
-                        } else if (request == "fetchInbox" && response && response.value) {
-                            response = identifyURLS(response.value);
-                        }
-                        sendResponse(response ? response : { error: "no_response" });
+                    data.httpCall({ ...data, token: response['access_token'] }).success(function (response) {
+                        handleResponse(data, response);
                     }).error(function (error) {
                         sendResponse({ error: "bad_request" });
                     })
@@ -97,14 +60,35 @@ angular.module("app", []).run(function (GraphHelper, storageService) {
             });
         })
     }
-    identifyURLS = function (messages) {
+    handleResponse = function (data, response) {
+        console.log(response);
+        var sendResponse = data.responseCallback;
+        if (data.request == "fetchInbox" && response && response.totalItemCount) {
+            chrome.storage.local.get('inboxSize', function (keys) {
+                var inboxSize = keys.inboxSize ? keys.inboxSize : 0;
+                if (!keys.inboxSize || response.totalItemCount - inboxSize > 0) {
+                    console.log(keys);
+                    storageSrv.setInboxSize(response.totalItemCount);
+                    makeHttpCall({
+                        ...data,
+                        topSize: response.totalItemCount - inboxSize > 100 ? 100 : response.totalItemCount - inboxSize,
+                        httpCall: graphHelper.fetchInbox
+                    })
+                } else
+                    sendResponse(response ? response : { error: "no_response" });
+            });
+        } else if (data.request == "fetchInbox" && response && response.value) {
+            identifyURLS(response.value).then(urls => sendResponse(urls))
+        } else
+            sendResponse(response ? response : { error: "no_response" });
+    }
+    identifyURLS = async function (messages) {
         var allURLs = [];
         messages = messages.filter(m => {
             let fourWeeksAgo = new Date();
             fourWeeksAgo.setDate(fourWeeksAgo.getDate() - 31);
             return m.inferenceClassification == 'focused' && new Date(m.sentDateTime) > fourWeeksAgo;
         });
-        console.log(messages);
         messages.forEach(function (message) {
             var urls = [];
             if (message.body.contentType == "text") {
@@ -116,6 +100,7 @@ angular.module("app", []).run(function (GraphHelper, storageService) {
                             url: item,
                             message: {
                                 body: message.body.content || "No body",
+                                bodyPreview: message.bodyPreview || "",
                                 from: message.from.emailAddress || "Unknown",
                                 subject: message.subject || "No subject",
                                 webLink: message.webLink || "",
@@ -138,6 +123,7 @@ angular.module("app", []).run(function (GraphHelper, storageService) {
                                 url: match[1],
                                 message: {
                                     body: message.body.content || "No body",
+                                    bodyPreview: message.bodyPreview || "",
                                     from: message.from.emailAddress || "Unknown",
                                     subject: message.subject || "No subject",
                                     webLink: message.webLink || "",
@@ -150,8 +136,9 @@ angular.module("app", []).run(function (GraphHelper, storageService) {
             }
             allURLs = [...allURLs, ...urls];
         })
+        let retURLs = [];
         if (allURLs.length)
-            storageSrv.addURLs(allURLs);
-        return allURLs
+            retURLs = await storageSrv.addURLs(allURLs);
+        return retURLs
     }
 });

@@ -3,33 +3,38 @@ var charmStyle = {
         position: fixed;
         bottom: 20px;
         left: 0;
-        height: 80px;
-        width: 45px;
+        height: 55px;
+        width: 28px;
         overflow: hidden;
-        z-index: 9999; !important`,
-    "email-iframe-container": `
-        background: white;
-        width: 0;
-        height: 0;
-        border-radius: 10px 10px 0 0;`,
-    "email-sender": `
-        background-color: white;
-        background: #2e3b40;
-        margin: 0;
-        width: 100%;
-        height: 30px;
-        visibility: visible`,
-    "hidden": `
-        visibility: hidden;
-    `,
-    "email-iframe-container-visible": `
-        -webkit-transition: height 300ms ease-in-out;
-        transition: height 300ms ease-in-out;
-        background: white;
-        width: 30%;
-        min-width: 300px;
-        height: 300px;
+        z-index: 9999;`,
+    "idiv-expanded": `
         position: fixed;
+        bottom: 20px;
         left: 0;
-        bottom: 65px;`
+        height: 410px;
+        width: 405px;
+        overflow: hidden;
+        z-index: 9999;`,
+    "idiv-small": `
+        position: fixed;
+        bottom: 20px;
+        left: 0;
+        height: 260px;
+        width: 405px;
+        overflow: hidden;
+        z-index: 9999;`,
+    "iframe": `
+        position: absolute;
+        bottom: 0;`,
+    "annotation-alert": `
+        position: fixed;
+        top: 10px;
+        left: 10px;
+        padding: 5px;
+        box-shadow: 0 0 5px #222;
+        border-radius: 5px;
+        font-size: 12px;
+        color: white;
+        background-color: red;
+        z-index: 9999;`
 }

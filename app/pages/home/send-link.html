@@ -1,3 +1,6 @@
+<div class="success-message" ng-if="showSuccessMessage">
+    <div>Message sent!</div>
+</div>
 <div class="home-wrapper">
     <div class="form-control form-control-small web-address" ng-disabled="true">{{webAddress}}</div>
     <div class="selected-contact-container">
@@ -11,25 +14,34 @@
         ng-keyup="$event.keyCode == 13 ? addressEntered($event) : null" clear-selected="true">
     </angucomplete-alt>
     <div ng-show="errorMessage" class="alert alert-danger">{{errorMessage}}</div>
+    <div class="panel-body">
+        <input type="checkbox" ng-model="addAnnotations" ng-change="addAnnotationsToggle()"> Add webpage annotations
+    </div>
     <textarea placeholder="Add a note (optional)" class="form-control" ng-keyup="adjustTextBox($event)" ng-model="notes"></textarea>
 </div>
-<div class="footer-bar" ng-class="{collapsed: !toggled, expanded: toggled}">
-    <p>{{footerMessage}}</p>
-    <div type="button" class="btn btn-link btn-footer" ng-disabled="selectedContacts.length == 0 && !serverError" ng-click="footerAction()">
-        <span ng-if="!serverError" class="glyphicon glyphicon-send"></span>
-        <b ng-if="serverError">Login</b>
-    </div>
-    <div type="button" class="btn btn-link btn-footer" ng-disabled="!urls.length" ng-click="toggled = !toggled">
-        <span class="glyphicon glyphicon-inbox"></span>
-    </div>
-    <div ng-repeat="urlOb in urls" class="url-object">
-        <h3>{{urlOb.url.hostname}}{{urlOb.url.pathname}}</h3>
+<div class="footer" ng-class="{collapsed: !toggled, expanded: toggled}">
+    <div class="footer-bar">
+        <p>{{footerMessage}}</p>
+        <div type="button" class="btn btn-link btn-footer" ng-disabled="selectedContacts.length == 0 && !serverError" ng-click="footerAction()">
+            <span ng-if="!serverError" class="glyphicon glyphicon-send"></span>
+            <b ng-if="serverError">Login</b>
+        </div>
+        <div type="button" class="btn btn-link btn-footer" ng-disabled="!urls.length" ng-click="toggled = !toggled">
+            <span class="glyphicon glyphicon-inbox"></span>
+        </div>
     </div>
     <ul class="list-group">
-        <li ng-repeat="urlOb in urls" class="list-group-item">
-            {{urlOb.url.hostname}}{{urlOb.url.pathname}}
+        <li ng-repeat="urlOb in urls" class="list-group-item" ng-click="openURL(urlOb.display.url)">
+            <h6>
+                <span ng-repeat="sender in urlOb.display.senders">{{sender}}{{$last ? '' : ', '}}</span>
+            </h6>
+            {{urlOb.display.url | limitTo:50}}
+            <span ng-if="urlOb.display.url.length > 50">...</span>
         </li>
-        <li class="list-group-item">Second item</li>
-        <li class="list-group-item">Third item</li>
+        <li class="list-group-item" ng-click="logout()">
+            <h6 style="text-align: center">
+                <b>Logout</b>
+            </h6>
+        </li>
     </ul>
 </div>

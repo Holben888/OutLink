@@ -17,9 +17,6 @@
         "http://*/*",
         "https://*/*"
       ],
-      "css": [
-        "app/pages/floating-charm/charm-animations.css"
-      ],
       "js": [
         "lib/jquery/jquery-3.2.1.min.js",
         "app/pages/floating-charm/charm-style-external.js",
@@ -36,11 +33,16 @@
   ],
   "web_accessible_resources": [
     "app/pages/floating-charm/charm.html",
+    "app/pages/floating-charm/annotation-input.html",
+    "app/pages/floating-charm/annotation-text.html",
     "app/pages/floating-charm/charm-style.css",
-    "app/pages/floating-charm/charm-animations.css",
-    "app/pages/floating-charm/events/js",
+    "app/pages/floating-charm/input-style.css",
+    "app/pages/floating-charm/charm-events/js",
+    "app/pages/floating-charm/input-events/js",
     "images/outlook-logo-white.png",
-    "images/loading.gif"
+    "images/chevron-left.png",
+    "images/chevron-down.png",
+    "images/inbox.png"
   ],
   "content_security_policy": "script-src 'self' 'unsafe-eval' https://ssl.google-analytics.com; object-src 'self'"
 }

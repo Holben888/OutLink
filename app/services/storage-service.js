@@ -37,6 +37,11 @@ angular.module('app').service('storageService', function ($q) {
             console.log('User stored');
         })
     }
+    this.storeHomeState = function (data) {
+        chrome.storage.local.set(data, function () {
+            console.log('Home state stored');
+        })
+    }
     this.syncData = function () {
         chrome.storage.sync.get(null, function (keys) {
             if (keys.token != null)
@@ -53,38 +58,53 @@ angular.module('app').service('storageService', function ($q) {
             console.log('Inbox size set');
         })
     }
+    this.logout = function () {
+        chrome.storage.local.clear();
+        chrome.storage.sync.clear();
+    }
     this.addURLs = function (urls) {
-        chrome.storage.local.get('urls', function (keys) {
-            if (!keys.urls)
-                keys.urls = [];
-            for (givenUrlOb of urls) {
-                let found = false;
-                let url = new URL(givenUrlOb.url);
-                url.hostname = url.hostname.replace('www.', '');
-                for (urlOb of keys.urls) {
-                    if (url.hostname == urlOb.url.hostname && url.pathname == urlOb.url.pathname) {
-                        found = true;
-                        let shouldAdd = true;
-                        for (message of urlOb.messages) {
-                            if (givenUrlOb.message.id == message.id)
-                                shouldAdd = false;
-                        } if (shouldAdd)
-                            urlOb.messages = [...urlOb.messages, givenUrlOb.message]
+        return new Promise(resolve => {
+            chrome.storage.local.get('urls', function (keys) {
+                if (!keys.urls)
+                    keys.urls = [];
+                for (givenUrlOb of urls) {
+                    let found = false;
+                    let url = new URL(givenUrlOb.url);
+                    if (url.hostname.indexOf('www.') == 0)
+                        url.hostname = url.hostname.substring(4);
+                    for (urlOb of keys.urls) {
+                        if (url.hostname == urlOb.url.hostname && url.pathname == urlOb.url.pathname) {
+                            found = true;
+                            let shouldAdd = true;
+                            for (message of urlOb.messages) {
+                                if (givenUrlOb.message.id == message.id)
+                                    shouldAdd = false;
+                            } if (shouldAdd) {
+                                urlOb.display.senders = [...urlOb.display.senders, givenUrlOb.message.from.name || givenUrlOb.message.from.address]
+                                urlOb.messages = [...urlOb.messages, givenUrlOb.message]
+                                urlOb.display.senders = urlOb.display.senders.filter(function (elem, index, self) {
+                                    return index == self.indexOf(elem);
+                                })
+                            }
 
+                        }
+                    } if (!found) {
+                        keys.urls = [...keys.urls, {
+                            display: {
+                                url: givenUrlOb.url,
+                                senders: [givenUrlOb.message.from.name || givenUrlOb.message.from.address]
+                            },
+                            url: {
+                                hostname: url.hostname,
+                                pathname: url.pathname
+                            },
+                            messages: [givenUrlOb.message]
+                        }]
                     }
-                } if (!found) {
-                    keys.urls = [...keys.urls, {
-                        url: {
-                            hostname: url.hostname,
-                            pathname: url.pathname
-                        },
-                        messages: [givenUrlOb.message]
-                    }]
                 }
-            }
-            console.log(keys.urls)
-            chrome.storage.local.set({ urls: keys.urls }, function () {
-                console.log("urls added");
+                chrome.storage.local.set({ urls: keys.urls }, function () {
+                    resolve(keys.urls);
+                })
             })
         })
     }
